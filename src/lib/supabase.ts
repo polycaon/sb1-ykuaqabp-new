@@ -12,5 +12,10 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'vite-react'
+    }
   }
 });

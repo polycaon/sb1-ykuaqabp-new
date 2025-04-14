@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Filter } from 'lucide-react';
-import { countries, states, durations, feeRanges } from '../data';
+import { states, durations, feeRanges } from '../data';
 import { FilterOptions } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface SearchFiltersProps {
   filters: FilterOptions;
@@ -9,6 +10,32 @@ interface SearchFiltersProps {
 }
 
 export default function SearchFilters({ filters, onFilterChange }: SearchFiltersProps) {
+  const [countries, setCountries] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchCountries();
+  }, []);
+
+  async function fetchCountries() {
+    try {
+      const { data, error } = await supabase
+        .from('schools')
+        .select('country')
+        .order('country');
+
+      if (error) {
+        console.error('Error fetching countries:', error);
+        return;
+      }
+
+      // Ensure unique countries and sort them
+      const uniqueCountries = Array.from(new Set(data.map(school => school.country))).sort();
+      setCountries(uniqueCountries);
+    } catch (err) {
+      console.error('Error in fetchCountries:', err);
+    }
+  }
+
   return (
     <div className="w-full bg-white shadow-lg rounded-xl p-6 mb-8 border border-blue-100">
       <div className="flex items-center space-x-2 mb-6">
