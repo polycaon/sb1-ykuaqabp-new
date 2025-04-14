@@ -18,7 +18,7 @@ export default function Navigation() {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  MBA Bucks
+                  Cost of MBA
                 </h1>
               </div>
             </Link>

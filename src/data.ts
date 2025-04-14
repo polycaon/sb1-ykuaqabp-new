@@ -42,12 +42,12 @@ export const programTypes: ProgramType[] = [
     icon: 'ScrollText'
   },
   {
-    id: 'phd',
-    name: 'PhD in Management',
-    description: 'Advanced research degree for academic and research careers. Develop cutting-edge knowledge in management theory and practice.',
-    averageDuration: '4-5 years',
-    averageFee: 'Varies',
-    icon: 'Brain'
+    id: 'emba',
+    name: 'Executive MBA',
+    description: 'Designed for senior executives and leaders. Flexible format combining intensive in-person modules with distance learning.',
+    averageDuration: '18-24 months',
+    averageFee: '$125,000+',
+    icon: 'Briefcase'
   }
 ];
 
@@ -181,7 +181,7 @@ export const schools: School[] = [
     tuitionFee: 98000,
     programType: "full-time-mba"
   },
-     {
+  {
     name: "Goizueta Business School",
     city: "Atlanta",
     state: "Georgia",

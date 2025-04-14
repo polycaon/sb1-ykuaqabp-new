@@ -4,11 +4,11 @@ import { GraduationCap, Globe, DollarSign, Search } from 'lucide-react';
 function About() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">About MBA Bucks</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">About Cost of MBA</h1>
       
       <div className="prose prose-blue max-w-none">
         <p className="text-lg text-gray-600 mb-8">
-          MBA Bucks is your comprehensive guide to MBA programs worldwide. We help prospective students make informed decisions by providing transparent, up-to-date information about program costs, durations, and locations.
+          Cost of MBA is your comprehensive guide to MBA programs worldwide. We help prospective students make informed decisions by providing transparent, up-to-date information about program costs, durations, and locations.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
