@@ -9,6 +9,47 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          id: string
+          title: string
+          slug: string
+          excerpt: string
+          content: string
+          author: string
+          read_time: string
+          published: boolean
+          published_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          slug: string
+          excerpt: string
+          content: string
+          author: string
+          read_time: string
+          published?: boolean
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          slug?: string
+          excerpt?: string
+          content?: string
+          author?: string
+          read_time?: string
+          published?: boolean
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
       program_types: {
         Row: {
           id: string

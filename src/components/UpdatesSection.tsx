@@ -4,6 +4,11 @@ import { Update } from '../types';
 
 const updates: Update[] = [
   {
+    date: '2025-03-20',
+    title: 'Added 50 US Schools',
+    description: 'Expanded our database with 50 top US MBA programs.'
+  },
+  {
     date: '2025-03-15',
     title: 'Added European Schools',
     description: 'Added top MBA programs from France and Spain.'
@@ -30,7 +35,7 @@ export default function UpdatesSection() {
         </div>
       </div>
       <div className="space-y-2">
-        {updates.slice(0, 2).map((update, index) => (
+        {updates.map((update, index) => (
           <div key={index} className="border-l-2 border-blue-200 pl-3 py-1">
             <div className="flex justify-between items-start">
               <p className="text-xs text-gray-600">

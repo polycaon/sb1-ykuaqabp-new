@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Clock, Globe, BookOpen, ScrollText, Brain, Users, MapPin, DollarSign, Bell } from 'lucide-react';
+import { GraduationCap, Clock, Globe, BookOpen, ScrollText, Briefcase, Users, MapPin, DollarSign, Bell } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/supabase';
+import { Update } from '../types';
 
 type ProgramType = Database['public']['Tables']['program_types']['Row'];
 
@@ -12,8 +13,31 @@ const iconMap: { [key: string]: React.ComponentType } = {
   Globe,
   BookOpen,
   ScrollText,
-  Brain
+  Briefcase
 };
+
+const updates: Update[] = [
+  {
+    date: '2025-03-20',
+    title: 'Added 50 US Schools',
+    description: 'Expanded our database with 50 top US MBA programs.'
+  },
+  {
+    date: '2025-03-15',
+    title: 'Added European Schools',
+    description: 'Added top MBA programs from France and Spain.'
+  },
+  {
+    date: '2025-03-10',
+    title: 'UK Schools Update',
+    description: 'Added UK business schools data.'
+  },
+  {
+    date: '2025-03-05',
+    title: 'Launch',
+    description: 'Initial launch with US MBA programs.'
+  }
+];
 
 export default function Home() {
   const navigate = useNavigate();
@@ -161,18 +185,14 @@ export default function Home() {
                 <h2 className="text-lg font-semibold text-gray-900">Latest Updates</h2>
               </div>
               <div className="space-y-4">
-                <div className="border-l-2 border-indigo-200 pl-4 py-1">
-                  <p className="text-sm text-gray-600">Added top MBA programs from France and Spain</p>
-                  <span className="text-xs text-gray-400">March 15, 2025</span>
-                </div>
-                <div className="border-l-2 border-indigo-200 pl-4 py-1">
-                  <p className="text-sm text-gray-600">Added UK business schools data</p>
-                  <span className="text-xs text-gray-400">March 10, 2025</span>
-                </div>
-                <div className="border-l-2 border-indigo-200 pl-4 py-1">
-                  <p className="text-sm text-gray-600">Initial launch with US MBA programs</p>
-                  <span className="text-xs text-gray-400">March 5, 2025</span>
-                </div>
+                {updates.map((update, index) => (
+                  <div key={index} className="border-l-2 border-indigo-200 pl-4 py-1">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium text-gray-900">{update.title}</span> - {update.description}
+                    </p>
+                    <span className="text-xs text-gray-400">{update.date}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
