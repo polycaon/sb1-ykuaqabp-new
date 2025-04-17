@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Clock, Globe, BookOpen, ScrollText, Briefcase, Users, MapPin, DollarSign, Bell } from 'lucide-react';
+import { GraduationCap, Clock, Globe, BookOpen, ScrollText, Briefcase, Users, MapPin, DollarSign, Bell, Linkedin, Facebook, Twitter } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/supabase';
 import { Update } from '../types';
@@ -44,6 +44,8 @@ export default function Home() {
   const [programTypes, setProgramTypes] = useState<ProgramType[]>([]);
   const [schoolCounts, setSchoolCounts] = useState<Record<string, { schoolCount: number; countryCount: number }>>({});
   const [error, setError] = useState<string | null>(null);
+  const [showStatsPopup, setShowStatsPopup] = useState(true);
+  const [totalStats, setTotalStats] = useState({ schools: 0, programs: 0 });
 
   useEffect(() => {
     fetchProgramTypes();
@@ -73,7 +75,7 @@ export default function Home() {
     try {
       const { data: schools, error } = await supabase
         .from('schools')
-        .select('program_type, country');
+        .select('name, program_type, country');
       
       if (error) {
         console.error('Error fetching schools:', error);
@@ -82,19 +84,33 @@ export default function Home() {
       }
 
       const stats: Record<string, { schoolCount: number; countryCount: number }> = {};
+      const uniqueSchools = new Set();
+      let totalProgramCount = 0;
+
+      // First pass: collect unique schools
       (schools || []).forEach(school => {
         if (!school.program_type) return;
+        uniqueSchools.add(school.name);
+      });
+
+      // Second pass: count programs and countries
+      (schools || []).forEach(school => {
+        if (!school.program_type) return;
+        totalProgramCount++;
         
         if (!stats[school.program_type]) {
-          stats[school.program_type] = { schoolCount: 0, countryCount: 0 };
+          stats[school.program_type] = { schoolCount: 0, countryCount: 0, countries: new Set() };
         }
         stats[school.program_type].schoolCount++;
-        stats[school.program_type].countries = stats[school.program_type].countries || new Set();
         stats[school.program_type].countries.add(school.country);
         stats[school.program_type].countryCount = stats[school.program_type].countries.size;
       });
 
       setSchoolCounts(stats);
+      setTotalStats({
+        schools: uniqueSchools.size,
+        programs: totalProgramCount
+      });
     } catch (err) {
       console.error('Error in fetchSchoolStats:', err);
       setError('An unexpected error occurred while loading school data.');
@@ -110,14 +126,34 @@ export default function Home() {
       )}
       
       <div className="relative text-center mb-16">
+        {/* Stats Popup */}
+        {showStatsPopup && (
+          <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-br from-blue-600 to-purple-600 text-white p-3 rounded-lg shadow-lg animate-fade-in">
+            <button 
+              onClick={() => setShowStatsPopup(false)}
+              className="absolute top-1 right-1 text-white/80 hover:text-white text-xs"
+            >
+              ×
+            </button>
+            <div className="flex flex-col items-center">
+              <div className="text-xl font-bold">{totalStats.schools}+ Schools</div>
+              <div className="text-xl font-bold">{totalStats.programs}+ Programs</div>
+              <div className="text-xs text-blue-100 mt-1">Added</div>
+            </div>
+          </div>
+        )}
+
         <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-5">
           <GraduationCap className="w-96 h-96" />
         </div>
-        <h1 className="text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-          Find Your MBA Path
+        <h1 className="text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          MBA Costs, Simplified!
         </h1>
+        <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+          Pick the Right MBA Without Breaking the Bank
+        </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Compare programs from top business schools worldwide and make an informed decision about your future.
+          Compare tuition, fees, and other costs from top business schools worldwide—make a smarter financial decision for your MBA journey
         </p>
       </div>
 
@@ -195,6 +231,23 @@ export default function Home() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer with social links */}
+      <div className="mt-12 pt-4 border-t border-gray-200">
+        <div className="flex justify-center items-center gap-6">
+          <div className="flex items-center gap-4">
+            <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+              <Linkedin className="w-5 h-5" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+              <Facebook className="w-5 h-5" />
+            </a>
+            <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+              <Twitter className="w-5 h-5" />
+            </a>
           </div>
         </div>
       </div>

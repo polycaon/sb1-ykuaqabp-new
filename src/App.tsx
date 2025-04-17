@@ -19,14 +19,6 @@ function App() {
           {/* Catch any 404s and redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        
-        <footer className="bg-white/80 backdrop-blur-sm py-4 border-t border-indigo-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-gray-500 text-sm">
-              © 2025 Cost of MBA. All rights reserved.
-            </p>
-          </div>
-        </footer>
       </div>
     </Router>
   );
