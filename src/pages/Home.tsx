@@ -45,7 +45,7 @@ export default function Home() {
   const [schoolCounts, setSchoolCounts] = useState<Record<string, { schoolCount: number; countryCount: number }>>({});
   const [error, setError] = useState<string | null>(null);
   const [showStatsPopup, setShowStatsPopup] = useState(true);
-  const [totalStats, setTotalStats] = useState({ schools: 0, programs: 0 });
+  const [totalStats, setTotalStats] = useState({ schools: 0, programs: 0, countries: 0 });
 
   useEffect(() => {
     fetchProgramTypes();
@@ -85,15 +85,17 @@ export default function Home() {
 
       const stats: Record<string, { schoolCount: number; countryCount: number }> = {};
       const uniqueSchools = new Set();
+      const uniqueCountries = new Set();
       let totalProgramCount = 0;
 
-      // First pass: collect unique schools
+      // First pass: collect unique schools and countries
       (schools || []).forEach(school => {
         if (!school.program_type) return;
         uniqueSchools.add(school.name);
+        uniqueCountries.add(school.country);
       });
 
-      // Second pass: count programs and countries
+      // Second pass: count programs and countries per program type
       (schools || []).forEach(school => {
         if (!school.program_type) return;
         totalProgramCount++;
@@ -109,7 +111,8 @@ export default function Home() {
       setSchoolCounts(stats);
       setTotalStats({
         schools: uniqueSchools.size,
-        programs: totalProgramCount
+        programs: totalProgramCount,
+        countries: uniqueCountries.size
       });
     } catch (err) {
       console.error('Error in fetchSchoolStats:', err);
@@ -135,9 +138,10 @@ export default function Home() {
             >
               ×
             </button>
-            <div className="flex flex-col items-center">
-              <div className="text-xl font-bold">{totalStats.schools}+ Schools</div>
-              <div className="text-xl font-bold">{totalStats.programs}+ Programs</div>
+            <div className="flex flex-col items-center text-center">
+              <div className="text-lg font-bold">{totalStats.schools}+ Schools</div>
+              <div className="text-lg font-bold">{totalStats.programs}+ Programs</div>
+              <div className="text-lg font-bold">{totalStats.countries}+ Countries</div>
               <div className="text-xs text-blue-100 mt-1">Added</div>
             </div>
           </div>
@@ -235,10 +239,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Footer with social links */}
+      {/* Footer with social links and copyright */}
       <div className="mt-12 pt-4 border-t border-gray-200">
-        <div className="flex justify-center items-center gap-6">
-          <div className="flex items-center gap-4">
+        <div className="flex justify-center items-center space-x-8">
+          <span className="text-sm text-gray-500">© 2025 Cost of MBA. All rights reserved.</span>
+          <div className="flex items-center space-x-4">
             <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
               <Linkedin className="w-5 h-5" />
             </a>
