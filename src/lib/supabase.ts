@@ -8,6 +8,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
+// Validate URL format
+try {
+  new URL(supabaseUrl);
+} catch (error) {
+  console.error('Invalid Supabase URL format:', error);
+  throw new Error('Invalid Supabase URL format');
+}
+
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -17,5 +25,13 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     headers: {
       'X-Client-Info': 'vite-react'
     }
+  },
+  db: {
+    schema: 'public'
   }
 });
+
+// Test the connection
+supabase.from('schools').select('count', { count: 'exact', head: true })
+  .then(() => console.log('Supabase connection successful'))
+  .catch(error => console.error('Supabase connection error:', error.message));

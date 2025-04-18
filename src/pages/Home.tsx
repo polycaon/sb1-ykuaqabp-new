@@ -44,60 +44,63 @@ export default function Home() {
   const [programTypes, setProgramTypes] = useState<ProgramType[]>([]);
   const [schoolCounts, setSchoolCounts] = useState<Record<string, { schoolCount: number; countryCount: number }>>({});
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showStatsPopup, setShowStatsPopup] = useState(true);
   const [totalStats, setTotalStats] = useState({ schools: 0, programs: 0, countries: 0 });
 
   useEffect(() => {
-    fetchProgramTypes();
-    fetchSchoolStats();
+    const initializeData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        await Promise.all([fetchProgramTypes(), fetchSchoolStats()]);
+      } catch (err) {
+        console.error('Error initializing data:', err);
+        setError('Failed to load data. Please refresh the page to try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeData();
   }, []);
 
   async function fetchProgramTypes() {
     try {
-      const { data, error } = await supabase
+      const { data, error: supabaseError } = await supabase
         .from('program_types')
         .select('*');
       
-      if (error) {
-        console.error('Error fetching program types:', error);
-        setError('Failed to load program types. Please try again later.');
-        return;
+      if (supabaseError) {
+        throw new Error(`Failed to load program types: ${supabaseError.message}`);
       }
 
       setProgramTypes(data || []);
     } catch (err) {
       console.error('Error in fetchProgramTypes:', err);
-      setError('An unexpected error occurred. Please try again later.');
+      throw new Error('Failed to load program types. Please try again later.');
     }
   }
 
   async function fetchSchoolStats() {
     try {
-      const { data: schools, error } = await supabase
+      const { data: schools, error: supabaseError } = await supabase
         .from('schools')
         .select('name, program_type, country');
       
-      if (error) {
-        console.error('Error fetching schools:', error);
-        setError('Failed to load school statistics. Please try again later.');
-        return;
+      if (supabaseError) {
+        throw new Error(`Failed to load school statistics: ${supabaseError.message}`);
       }
 
-      const stats: Record<string, { schoolCount: number; countryCount: number }> = {};
+      const stats: Record<string, { schoolCount: number; countryCount: number; countries: Set<string> }> = {};
       const uniqueSchools = new Set();
       const uniqueCountries = new Set();
       let totalProgramCount = 0;
 
-      // First pass: collect unique schools and countries
       (schools || []).forEach(school => {
         if (!school.program_type) return;
         uniqueSchools.add(school.name);
         uniqueCountries.add(school.country);
-      });
-
-      // Second pass: count programs and countries per program type
-      (schools || []).forEach(school => {
-        if (!school.program_type) return;
         totalProgramCount++;
         
         if (!stats[school.program_type]) {
@@ -108,7 +111,16 @@ export default function Home() {
         stats[school.program_type].countryCount = stats[school.program_type].countries.size;
       });
 
-      setSchoolCounts(stats);
+      // Convert stats object to the expected format without the Set
+      const formattedStats: Record<string, { schoolCount: number; countryCount: number }> = {};
+      Object.entries(stats).forEach(([key, value]) => {
+        formattedStats[key] = {
+          schoolCount: value.schoolCount,
+          countryCount: value.countryCount
+        };
+      });
+
+      setSchoolCounts(formattedStats);
       setTotalStats({
         schools: uniqueSchools.size,
         programs: totalProgramCount,
@@ -116,8 +128,16 @@ export default function Home() {
       });
     } catch (err) {
       console.error('Error in fetchSchoolStats:', err);
-      setError('An unexpected error occurred while loading school data.');
+      throw new Error('Failed to load school statistics. Please try again later.');
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      </div>
+    );
   }
 
   return (

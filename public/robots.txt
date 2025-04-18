@@ -1,4 +1,30 @@
+# Allow all good bots
 User-agent: *
 Allow: /
 
+# Block sensitive paths
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /wp-content/
+Disallow: /admin/
+Disallow: /administrator/
+Disallow: /phpmyadmin/
+Disallow: /.env
+Disallow: /config
+Disallow: /backup
+Disallow: /setup-config.php
+
+# Block bad bots
+User-agent: PetalBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: MJ12bot
+Disallow: /
+User-agent: AhrefsBot
+Disallow: /
+User-agent: BLEXBot
+Disallow: /
+
+# Sitemap location
 Sitemap: https://thecostofmba.com/sitemap.xml
