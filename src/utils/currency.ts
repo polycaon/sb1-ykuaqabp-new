@@ -29,13 +29,21 @@ export const formatCurrency = (amount: number, country: string, showUSD = false)
     maximumFractionDigits: 0,
   });
 
-  // For US amounts, show as is. For other currencies, convert from USD
-  const localAmount = country === 'US' ? amount : amount * currencyInfo.rate;
-  const formattedLocal = `${currencyInfo.symbol}${formatter.format(localAmount)}`;
+  // For US amounts, show as is
+  if (country === 'US') {
+    return `$${formatter.format(amount)}`;
+  }
+
+  // For other currencies, convert to USD (since amount is in local currency)
+  const usdAmount = amount / currencyInfo.rate;
+  const formattedUSD = `$${formatter.format(usdAmount)}`;
+  const formattedLocal = `${currencyInfo.symbol}${formatter.format(amount)}`;
   
-  if (showUSD && country !== 'US') {
-    return `${formattedLocal} ($${formatter.format(amount)})`;
+  // If showUSD is true, show both USD and local currency
+  if (showUSD) {
+    return `${formattedUSD} (${formattedLocal})`;
   }
   
-  return formattedLocal;
+  // If showUSD is false, show only USD
+  return formattedUSD;
 };
